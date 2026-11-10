@@ -1,0 +1,14 @@
+node_modules/
+.env
+
+logs/
+*.log
+npm-debug.log*
+
+.DS_Store
+Thumbs.db
+.vscode/
+
+coverage/
+# DB CA certificates (provided via env in prod)
+certs/
