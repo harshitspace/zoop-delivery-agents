@@ -7,8 +7,8 @@ import { createAgentSchema, updateAgentSchema, idParamSchema, listAgentsQuerySch
 const router = Router();
 
 router.route('/createAgent').post(requireAuth, validate(createAgentSchema), createAgent);
-router.route('/getAgents').get(validate(listAgentsQuerySchema, "query"), getAgents);
-router.route('/getAgent/:id').get(validate(idParamSchema, "params"), getAgentById);
+router.route('/getAgents').get(requireAuth, validate(listAgentsQuerySchema, "query"), getAgents);
+router.route('/getAgent/:id').get(requireAuth, validate(idParamSchema, "params"), getAgentById);
 router.route('/updateAgent/:id').put(requireAuth, validate(idParamSchema, "params"), validate(updateAgentSchema), updateAgent);
 router.route('/deleteAgent/:id').delete(requireAuth, validate(idParamSchema, "params"), deleteAgent);
 

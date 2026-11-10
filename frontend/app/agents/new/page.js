@@ -1,21 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { agentsApi } from "@/lib/api";
 import AgentForm from "@/components/AgentForm";
-import { useAuth } from "@/components/AuthProvider";
-import Skeleton from "@/components/Skeleton";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
-export default function NewAgentPage() {
+function NewAgent() {
   const router = useRouter();
-  const { user, ready } = useAuth();
-
-  useEffect(() => {
-    if (ready && !user) router.replace("/login");
-  }, [ready, user, router]);
-
-  if (!ready || !user) return <Skeleton rows={6} />;
 
   const create = async (data) => {
     await agentsApi.create(data);
@@ -31,5 +22,13 @@ export default function NewAgentPage() {
         <AgentForm key="new" onSubmit={create} submitLabel="Create Agent" />
       </div>
     </div>
+  );
+}
+
+export default function NewAgentPage() {
+  return (
+    <ProtectedRoute>
+      <NewAgent />
+    </ProtectedRoute>
   );
 }

@@ -171,8 +171,8 @@ Base path: `/api/agents`. Routes use explicit action names.
 | Method | Route | Auth | Description | Success |
 |---|---|---|---|---|
 | POST | `/api/agents/createAgent` | required | Create an agent | `201` |
-| GET | `/api/agents/getAgents` | public | List agents (search, filter, pagination) | `200` |
-| GET | `/api/agents/getAgent/:id` | public | Get one agent | `200` |
+| GET | `/api/agents/getAgents` | required | List agents (search, filter, pagination) | `200` |
+| GET | `/api/agents/getAgent/:id` | required | Get one agent | `200` |
 | PUT | `/api/agents/updateAgent/:id` | required | Update an agent | `200` |
 | DELETE | `/api/agents/deleteAgent/:id` | required | Delete an agent | `200` |
 
@@ -212,14 +212,14 @@ List response shape:
 
 ## Authentication
 
-Write operations (create, update, delete) require authentication. The flow:
+Write operations (create, update, delete) require authentication, and read operations (list, get one) are also protected — every agent route requires a valid session. The flow:
 
 1. `POST /api/auth/login` with credentials from `ADMIN_USERNAME` / `ADMIN_PASSWORD`.
 2. On success the server signs a JWT and sets it in an **httpOnly cookie** (not readable by JavaScript, reducing XSS risk).
 3. Protected routes verify the cookie via middleware.
 4. In production the cookie is `Secure` + `SameSite=None` (set `COOKIE_SECURE=true`) so it works across the frontend and API subdomains over HTTPS.
 
-Read operations (list, get one) are public.
+All agent routes (including reads) require authentication.
 
 **Test credentials** (demo): `admin` / `admin123`. The login page has a "Use test credentials" option to reveal and autofill them.
 
@@ -261,11 +261,11 @@ curl -b cookies.txt -X POST http://localhost:8000/api/agents/createAgent \
   -H "Content-Type: application/json" \
   -d '{"full_name":"Test Agent","phone":"9876543210","email":"test@example.com","service_area":"Pune","status":"active"}'
 
-# List (public) + search + pagination
-curl "http://localhost:8000/api/agents/getAgents?search=test&page=1&limit=10"
+# List (search + pagination)
+curl -b cookies.txt "http://localhost:8000/api/agents/getAgents?search=test&page=1&limit=10"
 
 # Get one
-curl http://localhost:8000/api/agents/getAgent/1
+curl -b cookies.txt http://localhost:8000/api/agents/getAgent/1
 
 # Update
 curl -b cookies.txt -X PUT http://localhost:8000/api/agents/updateAgent/1 \

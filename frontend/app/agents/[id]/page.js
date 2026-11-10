@@ -6,6 +6,7 @@ import Link from "next/link";
 import { agentsApi } from "@/lib/api";
 import { useAuth } from "@/components/AuthProvider";
 import Skeleton from "@/components/Skeleton";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 function AgentDetail() {
   const { id } = useParams();
@@ -101,8 +102,10 @@ function AgentDetail() {
 
 export default function AgentDetailPage() {
   return (
-    <Suspense fallback={<Skeleton rows={7} />}>
-      <AgentDetail />
-    </Suspense>
+    <ProtectedRoute>
+      <Suspense fallback={<Skeleton rows={7} />}>
+        <AgentDetail />
+      </Suspense>
+    </ProtectedRoute>
   );
 }

@@ -5,10 +5,11 @@ import Link from "next/link";
 import { agentsApi } from "@/lib/api";
 import { useAuth } from "@/components/AuthProvider";
 import Skeleton from "@/components/Skeleton";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const LIMIT = 10;
 
-export default function AgentsListPage() {
+function AgentsList() {
   const { user } = useAuth();
   const [agents, setAgents] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, total: 0, totalPages: 1 });
@@ -153,5 +154,13 @@ export default function AgentsListPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AgentsListPage() {
+  return (
+    <ProtectedRoute>
+      <AgentsList />
+    </ProtectedRoute>
   );
 }

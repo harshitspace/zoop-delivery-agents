@@ -4,20 +4,15 @@ import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { agentsApi } from "@/lib/api";
 import AgentForm from "@/components/AgentForm";
-import { useAuth } from "@/components/AuthProvider";
 import Skeleton from "@/components/Skeleton";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 function EditAgent() {
   const { id } = useParams();
   const router = useRouter();
-  const { user, ready } = useAuth();
   const [agent, setAgent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (ready && !user) router.replace("/login");
-  }, [ready, user, router]);
 
   useEffect(() => {
     (async () => {
@@ -43,7 +38,6 @@ function EditAgent() {
     router.push(`/agents/${id}`);
   };
 
-  if (!ready || !user) return <Skeleton rows={6} />;
   if (loading) return <Skeleton rows={6} />;
   if (error) return <div className="alert error">{error}</div>;
 
@@ -61,8 +55,10 @@ function EditAgent() {
 
 export default function EditAgentPage() {
   return (
-    <Suspense fallback={<Skeleton rows={6} />}>
-      <EditAgent />
-    </Suspense>
+    <ProtectedRoute>
+      <Suspense fallback={<Skeleton rows={6} />}>
+        <EditAgent />
+      </Suspense>
+    </ProtectedRoute>
   );
 }
