@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -8,7 +8,7 @@ const TEST_USER = "admin";
 const TEST_PASS = "admin123";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +16,17 @@ export default function LoginPage() {
   const [showCreds, setShowCreds] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setUsername("");
+      setPassword("");
+      setShowPassword(false);
+      setShowCreds(false);
+      setError(null);
+      setLoading(false);
+    }
+  }, [user]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -26,6 +37,7 @@ export default function LoginPage() {
       router.push("/");
     } catch (err) {
       setError(err.message);
+    } finally {
       setLoading(false);
     }
   };
